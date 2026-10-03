@@ -24,15 +24,15 @@ test("manifest is Firefox MV3 with storage and only chatgpt.com content access",
   assert.deepEqual(manifest.browser_specific_settings.gecko.data_collection_permissions.required, ["none"]);
 });
 
-test("user-origin sheet explicitly overrides native vars and bubble paints, with no descendant rule", () => {
+test("user-origin sheet explicitly overrides native vars and bubble paints, with bounded typography rules", () => {
   const css = readFileSync("extension/content.css", "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
-  assert.equal((css.match(/{/g) || []).length, 1);
+  assert.equal((css.match(/{/g) || []).length, 3);
   assert.match(css, /--messaging-outgoing-background: var\(--chatgpt-dot-color-background\) !important/);
   assert.match(css, /--messaging-outgoing-foreground: var\(--chatgpt-dot-color-foreground\) !important/);
   assert.match(css, /\n\s*background: var\(--chatgpt-dot-color-background\) !important/);
   assert.match(css, /\n\s*color: var\(--chatgpt-dot-color-foreground\) !important/);
   // background shorthand also clears any native gradient/image.
-  assert.doesNotMatch(css, /@layer|\.message-bubble\s+[*>:]|url\(/);
+  assert.doesNotMatch(css, /@layer|\.message-bubble\s+\*|url\(/);
 });
 
 test("extension has no network code, remote scripts, sync storage, or HTML injection", () => {

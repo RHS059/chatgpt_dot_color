@@ -6,3 +6,18 @@
   background: var(--chatgpt-dot-color-background) !important;
   color: var(--chatgpt-dot-color-foreground) !important;
 }
+
+/* Ordinary text may have an explicit site foreground instead of inheriting it.
+   Paint the same opaque background too, so nested wrappers cannot break contrast.
+   Protected code, controls, media, ARIA components and marked attachments retain
+   their own styles. No descendant-wide universal recoloring is used. */
+:root[data-chatgpt-dot-color-enabled] :where(.messaging-root) .message-row.self:not(.assistant) .message-bubble :where(p, span, a, strong, em, b, i, u, s, small, li, blockquote, h1, h2, h3, h4, h5, h6):not(:where(pre, code, kbd, samp, button, input, textarea, select, option, svg, math, canvas, picture, video, audio, iframe, object, embed, [role], [contenteditable], .attachment, .file-card, [data-attachment], [data-testid*="attachment"], [data-testid*="file-card"]), :where(.message-bubble) :where(pre, code, kbd, samp, button, input, textarea, select, option, svg, math, canvas, picture, video, audio, iframe, object, embed, [role], [contenteditable], .attachment, .file-card, [data-attachment], [data-testid*="attachment"], [data-testid*="file-card"]) *) {
+  background: var(--chatgpt-dot-color-background) !important;
+  color: var(--chatgpt-dot-color-foreground) !important;
+}
+
+/* Keep recolored links distinguishable without depending on their old color. */
+:root[data-chatgpt-dot-color-enabled] :where(.messaging-root) .message-row.self:not(.assistant) .message-bubble a:any-link:not(:where(pre, code, kbd, samp, button, input, textarea, select, option, svg, math, canvas, picture, video, audio, iframe, object, embed, [role], [contenteditable], .attachment, .file-card, [data-attachment], [data-testid*="attachment"], [data-testid*="file-card"]), :where(.message-bubble) :where(pre, code, kbd, samp, button, input, textarea, select, option, svg, math, canvas, picture, video, audio, iframe, object, embed, [role], [contenteditable], .attachment, .file-card, [data-attachment], [data-testid*="attachment"], [data-testid*="file-card"]) *) {
+  text-decoration-line: underline !important;
+  text-decoration-color: currentColor !important;
+}

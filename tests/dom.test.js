@@ -217,3 +217,42 @@ test("write failures are shown and controls recover for retry", async (t) => {
   assert.equal(env.document.getElementById("status").dataset.error, "true");
   assert.equal(env.document.getElementById("controls").disabled, false);
 });
+
+test("nested ordinary typography overrides explicit foreground/background while protected components stay excluded", async (t) => {
+  const env = await content({ backgroundColor: "#000" }, undefined, `<!doctype html><html><body role="main">
+    <div class="messaging-root" role="log"><div class="message-row self" role="group"><div class="message-bubble" role="group">
+      <div class="prose" style="background:white"><p id="paragraph" style="color:red"><span id="span" style="color:black">Text</span><strong id="strong">Bold</strong><a id="link" href="/">Link</a></p></div>
+      <pre><code><span id="code">Code</span></code></pre>
+      <button><span id="button">Control</span></button>
+      <div class="attachment" style="background:white;color:black"><p id="attachment">File</p></div>
+      <div data-testid="message-attachment"><span id="marked-attachment">File</span></div>
+      <div role="group"><span id="role-component">Component</span></div>
+      <span role="button" id="role-self">Button</span>
+      <div contenteditable="true"><p id="editor">Editor</p></div>
+      <svg><text><tspan>SVG</tspan></text></svg>
+    </div></div><div class="message-row assistant"><div class="message-bubble"><p id="assistant">Assistant</p></div></div></div>
+  </body></html>`);
+  t.after(() => env.window.close());
+  const rules = source("content.css").replace(/\/\*[\s\S]*?\*\//g, "").split("}").filter((part) => part.trim()).map((part) => part.split("{"));
+  const [selector, declarations] = rules[1];
+  assert.deepEqual([...env.document.querySelectorAll(selector.trim())].map((node) => node.id), ["paragraph", "span", "strong", "link"]);
+  assert.match(declarations, /background: var\(--chatgpt-dot-color-background\) !important/);
+  assert.match(declarations, /color: var\(--chatgpt-dot-color-foreground\) !important/);
+  assert.deepEqual([...env.document.querySelectorAll(rules[2][0].trim())].map((node) => node.id), ["link"]);
+  assert.match(rules[2][1], /text-decoration-line: underline !important/);
+  assert.doesNotMatch(declarations, /font|outline|border/);
+  env.emit({ backgroundColor: {} });
+  assert.equal(env.document.querySelectorAll(selector.trim()).length, 0);
+});
+
+test("popup initial read failure shows retry guidance and leaves controls usable", async (t) => {
+  const env = await popup({}, async () => { throw new Error("unavailable"); });
+  t.after(() => env.window.close());
+  assert.equal(env.document.getElementById("status").dataset.error, "true");
+  assert.match(env.document.getElementById("status").textContent, /reopening/);
+  assert.equal(env.document.getElementById("controls").disabled, false);
+  input(env, "hex-color", "#fff");
+  submit(env);
+  await tick();
+  assert.equal(env.stored.backgroundColor, "#ffffff");
+});

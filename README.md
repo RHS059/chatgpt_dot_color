@@ -5,7 +5,7 @@ Fixing accessibility: a small Firefox extension that gives **your outgoing ChatG
 ## Use it
 
 1. Download the `chatgpt-dot-color-firefox-unsigned` artifact from a successful **Firefox extension** run in [GitHub Actions](https://github.com/RHS059/chatgpt_dot_color/actions). Extract the artifact wrapper to get the extension's inner `.zip` and `SHA256SUMS.txt`.
-2. In Firefox **140 or newer**, open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on**, and select the inner extension `.zip`. Alternatively, clone this repository and select `extension/manifest.json`.
+2. In Firefox desktop **140 or newer** (Android: 142+), open `about:debugging#/runtime/this-firefox`, choose **Load Temporary Add-on**, and select the inner extension `.zip`. Alternatively, clone this repository and select `extension/manifest.json`.
 3. Reload ChatGPT tabs that were already open once. New tabs load the extension automatically. Firefox must allow the extension to run on `chatgpt.com`.
 4. Open the **Dot Color** toolbar popup. Use the color picker or type `#RGB` / `#RRGGBB`. The preview shows the chosen text color, contrast ratio, and AA/AAA level. Click **Apply color** to save and update loaded ChatGPT tabs.
 5. **Reset to default** removes the saved override and restores ChatGPT's own theme. Changing the preview alone does not change the site.
@@ -28,7 +28,7 @@ Firefox injects `content.css` at **user origin** with `!important`; this outrank
 
 New bubbles and single-page navigation match the stylesheet automatically, without observing or scanning message content. `storage.onChanged` updates existing loaded tabs; new page loads restore the setting. A revision guard prevents an older initial read from undoing a newer save/reset. Back/forward-cache restoration refreshes the saved setting too.
 
-Ordinary text inherits the bubble foreground. Independently styled code blocks, attachments, images, buttons, and other child components are not forcibly recolored. This avoids making their text unreadable against their own backgrounds. The contrast result applies to the selected opaque background and black/white text, not a guarantee that every part of ChatGPT meets WCAG. OS forced-color modes, other user stylesheets, opacity, or future site changes may affect the rendered result.
+Ordinary paragraphs, spans, emphasis, headings, list text, and links receive the same opaque background and chosen foreground. This also handles explicit nested text colors without trusting an intervening wrapper's background. Recolored links stay underlined; focus styles, borders, and fonts are unchanged. Code/preformatted content, form controls, media, ARIA components, editable regions, marked attachments, and their descendants are excluded from this typography override so their own foreground/background pairs remain intact. Unmarked custom components or different future markup may need selector updates. The contrast result applies to the selected opaque background and black/white text, not a guarantee that every part of ChatGPT meets WCAG. OS forced-color modes, other user stylesheets, opacity, or future site changes may affect the rendered result.
 
 This targets the `.messaging-root` / `.message-row.self` dot messaging interface. Other ChatGPT layouts with different markup are intentionally untouched. The extension will need an update if those classes change. It affects the Firefox website, not native desktop/mobile apps.
 
