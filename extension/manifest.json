@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT Dot Color",
+  "version": "1.0.0",
+  "description": "Choose your outgoing ChatGPT bubble color with automatic WCAG black or white text contrast.",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_title": "ChatGPT Dot Color",
+    "default_popup": "popup.html",
+    "default_icon": "icons/bubble.svg"
+  },
+  "icons": {
+    "48": "icons/bubble.svg",
+    "96": "icons/bubble.svg"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "css_origin": "user",
+      "js": [
+        "color.js",
+        "content.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "chatgpt-dot-color@rhs059.github.io",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  }
+}

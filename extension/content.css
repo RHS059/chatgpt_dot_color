@@ -1,0 +1,8 @@
+/* Firefox injects this at USER origin. Important user rules beat author rules,
+   including layered and inline !important declarations. The gate is off by default. */
+:root[data-chatgpt-dot-color-enabled] :where(.messaging-root) .message-row.self:not(.assistant) .message-bubble {
+  --messaging-outgoing-background: var(--chatgpt-dot-color-background) !important;
+  --messaging-outgoing-foreground: var(--chatgpt-dot-color-foreground) !important;
+  background: var(--chatgpt-dot-color-background) !important;
+  color: var(--chatgpt-dot-color-foreground) !important;
+}
